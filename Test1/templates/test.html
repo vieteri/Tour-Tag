@@ -11,11 +11,19 @@
 <div style=" height:400px; width:300px; margin:0 auto;">
 <center>
 <h1><span style="color:#5C5C5C;">Tour</span><span style="color:#139442"> Tag</span></h1>
-<h2>TEST tst2</h2><br><br>
+<h2>Set new route</h2><br><br>
+{% for message in get_flashed_messages() %}
+   {{ message }}
+{% endfor %}
+<br><br>
 <a href="#" id="oulu" style="font-size:30px;text-decoration:none;">  Oulu<br>
 <a href="#" id="kokkola" style="font-size:30px;text-decoration:none;"> Kokkola<br>
 <a href="#" id="vaasa" style="font-size:30px; text-decoration:none;"> Vaasa </a><br>
-<a href="#" id="pori" style="font-size:30px;text-decoration:none;"> Pori</a></center>
+<a href="#" id="pori" style="font-size:30px;text-decoration:none;"> Pori</a><br><br><br><br>
+
+
+<p>Click <a href="/logout">here</a> to go logout.</p>
+</center>
 </div>
 
 <script>
