@@ -49,58 +49,58 @@ def login_required(f):
     return wrap
 
 
-# def hat(lines):
-#     colours = [tuple([int(n * 255) for n in colorsys.hsv_to_rgb(x / float(len(lines)), 1.0, 1.0)]) for x in range(len(lines))]
-#     unicornhathd.rotation(270)
-#     unicornhathd.brightness(0.6)
+def hat(lines):
+    colours = [tuple([int(n * 255) for n in colorsys.hsv_to_rgb(x / float(len(lines)), 1.0, 1.0)]) for x in range(len(lines))]
+    unicornhathd.rotation(270)
+    unicornhathd.brightness(0.6)
 
-#     width, height = unicornhathd.get_shape()
+    width, height = unicornhathd.get_shape()
 
-#     text_x = width
-#     text_y = 2
+    text_x = width
+    text_y = 2
 
-#     font_file, font_size = FONT
+    font_file, font_size = FONT
 
-#     font = ImageFont.truetype(font_file, font_size)
+    font = ImageFont.truetype(font_file, font_size)
 
-#     text_width, text_height = width, 0
-#     try:
+    text_width, text_height = width, 0
+    try:
         
-#         for line in lines:
-#             w, h = font.getsize(line)
-#             text_width += w + width
-#             text_height = max(text_height, h)
+        for line in lines:
+            w, h = font.getsize(line)
+            text_width += w + width
+            text_height = max(text_height, h)
 
-#         text_width += width + text_x + 1
+        text_width += width + text_x + 1
 
-#         image = Image.new('RGB', (text_width, max(16, text_height)), (0, 0, 0))
-#         draw = ImageDraw.Draw(image)
+        image = Image.new('RGB', (text_width, max(16, text_height)), (0, 0, 0))
+        draw = ImageDraw.Draw(image)
 
-#         offset_left = 0
+        offset_left = 0
 
-#         for index, line in enumerate(lines):
-#             draw.text((text_x + offset_left, text_y), line, colours[index], font=font)
+        for index, line in enumerate(lines):
+            draw.text((text_x + offset_left, text_y), line, colours[index], font=font)
 
-#             offset_left += font.getsize(line)[0] + width
+            offset_left += font.getsize(line)[0] + width
 
-#         for scroll in range(text_width - width):
-#             for x in range(width):
-#                 for y in range(height):
-#                     pixel = image.getpixel((x + scroll, y))
-#                     r, g, b = [int(n) for n in pixel]
-#                     unicornhathd.set_pixel(width - 1 - x, y, r, g, b)
+        for scroll in range(text_width - width):
+            for x in range(width):
+                for y in range(height):
+                    pixel = image.getpixel((x + scroll, y))
+                    r, g, b = [int(n) for n in pixel]
+                    unicornhathd.set_pixel(width - 1 - x, y, r, g, b)
 
-#             unicornhathd.show()
-#             time.sleep(0.01)
+            unicornhathd.show()
+            time.sleep(0.01)
 
-#     except : #KeyboardInterrupt
-#         unicornhathd.off()
+    except : #KeyboardInterrupt
+        unicornhathd.off()
 
-#     finally:
-#         unicornhathd.off()
-#         return 'true'
+    finally:
+        unicornhathd.off()
+        return 'true'
     
-# aloitus=hat(lines)
+aloitus=hat(lines)
 print ("DOne")
 
 a=1
@@ -164,8 +164,8 @@ def Return_Route():
 
 # Two lists are created where to store the route to go and come back 
 
-global go_route = []
-global back_route = []
+global go_route 
+global back_route 
 
 #######################################################################################################################################################################
 
@@ -175,7 +175,7 @@ def left_side():
     data1="LEFT"
     print (data1)
     lines=["Kokkola"]
-    #hat (lines)
+    hat (lines)
          
    ################################################################################    Added 
     if ctrl == 1:  # in this way it would be possible to store the two routes 
@@ -191,7 +191,7 @@ def left_side():
 def right_side():
    data1="RIGHT"
    lines=["Pori"]
-   #hat (lines)
+   hat (lines)
    return 'true'
 
 @app.route('/vaasa')
@@ -199,7 +199,7 @@ def right_side():
 def up_side():
    data1="FORWARD"
    lines=["Vaasa"]
-   #hat (lines)
+   hat (lines)
    return 'true'
 
 @app.route('/oulu')
@@ -207,7 +207,7 @@ def up_side():
 def down_side():
    data1="BACK"
    lines=["Oulu"]
-   #hat (lines)
+   hat (lines)
    return 'true'
 
 @app.route('/stop')
@@ -240,6 +240,7 @@ def Port_stop():
         timer = '{:02d}:{:02d}:{:02d}'.format(hours, mins, secs)
         data1="FORWARD"
         lines =[timer] # this should print the timer to the LEDs 
+        #hat (lines)
         time.sleep(1) 
         t -= 1
     return 'true'
@@ -254,6 +255,7 @@ def end_tour():
          # stop_port  
          # go_route
          # back_route 
+   return  'true'
 
 ##############################################################################################################################################################################
 if __name__ == "__main__":
