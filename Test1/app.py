@@ -133,6 +133,41 @@ def logout():
   flash('You were just logged out')
   return redirect(url_for('welcome'))
 
+#############################################################################################################################################################
+""" Functions for starting the tour and selecting the to go and come back route """
+
+# Start of the tour function and storing of the time 
+
+starting_times = []
+@app.route('/Start tour')
+@login_required
+def start_tour():
+    global  starting_times
+    now = datetime.now()
+    starting_times =  starting_times.append(now)   
+    return  'true'
+
+# Way to go and way back route selection 
+ctrl = 0 
+@app.route('/Input Route to go')
+@login_required
+def Input_Route():
+    global ctrl
+    ctrl = 1
+    return 'true'
+
+@app.route('/Input return Route')
+@login_required
+def Return_Route():
+    ctrl = 2
+    return 'true'
+
+# Two lists are created where to store the route to go and come back 
+
+global go_route = []
+global back_route = []
+
+#######################################################################################################################################################################
 
 @app.route('/kokkola')
 @login_required
@@ -141,6 +176,14 @@ def left_side():
     print (data1)
     lines=["Kokkola"]
     #hat (lines)
+         
+   ################################################################################    Added 
+    if ctrl == 1:  # in this way it would be possible to store the two routes 
+         go_route = go_route.append("Kokkola")
+    elif ctrl == 2: 
+         back_route = back_route.append("Kokkola")
+    ##############################################################################  
+         
     return 'true'
 
 @app.route('/pori')
@@ -174,6 +217,45 @@ def stop():
 
    return  'true'
 
+############################################################################################################################################################################
+""" Timer function when stopping at the port. Asks the user to input the port at which they are stopping and then
+stores the name of the port and time into two lists, also a countdown timer of 2h (stoppage time at the port) is started and should be printed to the LED matrix """
+
+port_stops_time = []
+stop_port = []
+@app.route('/Port Stop',  methods=['POST'])
+@login_required
+def Port_stop(): 
+    global port_stops_time
+    global stop_port 
+         
+    now = datetime.now()
+    port_stops_time =  port_stops_time.append(now)   
+    port = request.form['port']
+    stop_port = stop_port.append(port)
+    t =  7200
+    t = int(t)
+    while t: 
+        mins, secs = divmod(t, 60) 
+        timer = '{:02d}:{:02d}:{:02d}'.format(hours, mins, secs)
+        data1="FORWARD"
+        lines =[timer] # this should print the timer to the LEDs 
+        time.sleep(1) 
+        t -= 1
+    return 'true'
+
+
+""" Uploading the data to the database """
+@app.route('/End tour ~ Upload the data')
+@login_required
+def end_tour():
+         # starting_times
+         # port_stops_time 
+         # stop_port  
+         # go_route
+         # back_route 
+
+##############################################################################################################################################################################
 if __name__ == "__main__":
  print ("Start")
  app.run(host='0.0.0.0',port=5010, debug=True)
