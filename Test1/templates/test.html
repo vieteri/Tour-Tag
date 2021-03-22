@@ -15,63 +15,32 @@
 {% for message in get_flashed_messages() %}
    {{ message }}
 {% endfor %}
-    <label><b>Source</b></label>
-    <input type="text" name="source" id="source"> <br>
-    <label><b>Destination</b></label>
-    <input type="text" name="destination" id="destination">
-    <input type="submit" onclick="showsource();"><br/>
+    <br>
+    <form method='POST' action='/setroute' >
+       <label><b>Source</b></label>
+       <input type="text" name="source" > <br>
+       <label><b>Destination</b></label>
+       <input type="text" name="destination" >
+       <input type="submit" ;><br/>
+    </form>
 
-  <p>Newest route input: <span id='route'></span></p>
-  <div>
-    <h3>Routes:</h3>
-    <span id="routelist">
-    </ul>
+ 
+    
   </div>
 </body>
-
+</center>
+<center>
 <br><br>
-<a href="#" id="oulu" style="font-size:30px;text-decoration:none;">  Oulu<br>
-<a href="#" id="kokkola" style="font-size:30px;text-decoration:none;"> Kokkola<br>
-<a href="#" id="vaasa" style="font-size:30px; text-decoration:none;"> Vaasa </a><br>
-<a href="#" id="pori" style="font-size:30px;text-decoration:none;"> Pori</a><br><br><br><br>
+<br><br><br><br>
 
 
 <p>Click <a href="/logout">here</a> to go logout.</p>
 </center>
 </div>
 
-<script>
-    var routes, text, i, rlen;
-    routes = [];
-    function showsource() {
-        document.getElementById('route').innerHTML = 
-                    document.getElementById("source").value + '-' + document.getElementById("destination").value;
-        document.getElementById('routelist').innerHTML += document.getElementById('route').innerHTML + '<br>'
-    }
 
-$( document ).ready(function(){
-    $("#pori").on("mousedown", function() {
-     $.get('/pori');
-     }).on('mouseup', function() {
-     $.get('/stop');
-    });
-    $("#oulu").on("mousedown", function() {
-     $.get('/oulu');
-     }).on('mouseup', function() {
-     $.get('/stop');
-    });
-    $("#kokkola").on("mousedown", function() {
-     $.get('/kokkola');
-     }).on('mouseup', function() {
-     $.get('/stop');
-    });
-    $("#vaasa").on("mousedown", function() {
-     $.get('/vaasa');
-     }).on('mouseup', function() {
-     $.get('/stop');
-    });
-});
-</script>
+
+
 
 </body>
 </html>
