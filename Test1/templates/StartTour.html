@@ -6,13 +6,24 @@
     <link href="static/bootstrap.min.css" rel="stylesheet" media="screen">
   </head>
   <body>
+    <center>
     <div class="container">
       <h1>Tour is started</h2>
       <br>
-      <p>Click <a href="/">here</a> to go home.</p>
+      <form method='POST' action='/Port Stop' >
+       <label><b>Next port</b></label>
+       <input type="text" name="port" > <br>
+       <label><b>stop duration in seconds</b></label>
+       <input type="text" name="stoptime" >
+       <input type="submit" ;><br/>
+      </form>
+
+
+      <p>Click <a href="/End tour ~ Upload the data">here</a> to stop route.</p>
       {% for message in get_flashed_messages() %}
         {{ message }}
       {% endfor %}
     </div>
+  </center>
   </body>
 </html>
