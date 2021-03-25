@@ -6,6 +6,8 @@ import time
 from sys import exit
 from functools import wraps
 from datetime import datetime
+
+# For unicorn HAT HD setting
 ######################################
 # try:
 #     from PIL import Image, ImageDraw, ImageFont
@@ -14,9 +16,14 @@ from datetime import datetime
 
 # import unicornhathd
 ######################################
+
 FONT = ('/usr/share/fonts/truetype/freefont/FreeSansBold.ttf', 12)
+
+# Variable for the route
 global currentroute
 currentroute=[]
+
+# variable that will be printed of LED display
 lines = ["aloitus",
          "5",
          "4",
@@ -24,10 +31,9 @@ lines = ["aloitus",
          "2",
          "1"]
 
-# basic Flask functions from https://circuitdigest.com/microcontroller-projects/web-controlled-raspberry-pi-surveillance-robot
-# login functions from https://github.com/realpython/discover-flask
+# basic Flask functions learned from https://circuitdigest.com/microcontroller-projects/web-controlled-raspberry-pi-surveillance-robot
+# login functions are learned from https://github.com/realpython/discover-flask
     
-
 
 app = Flask(__name__)
 
@@ -45,7 +51,9 @@ def login_required(f):
             return redirect(url_for('login'))
     return wrap
 
+# Defining the Unicorn HAT function. Based on the example text.py provided by the pimoroni SW packet
 ############################################################################
+
 # def hat(lines):
 #     colours = [tuple([int(n * 255) for n in colorsys.hsv_to_rgb(x / float(len(lines)), 1.0, 1.0)]) for x in range(len(lines))]
 #     unicornhathd.rotation(270)
@@ -99,22 +107,30 @@ def login_required(f):
     
 # aloitus=hat(lines)
 ##########################################################################
-print ("DOne")
+
+
+print ("Done")
+
+
 #list of ports for setting the route
+# bug1 Åland missing
 stopssouth=['oulu','kokkola','vaasa','pori','turku','helsinki','hamina']
 
-
-
-a=1
+# actions in when browsing to base root xxx.xxx.xxx.xxx:5051/
+# redirects to login if not done already
 @app.route("/")
 @login_required
 def index():
     return render_template('test.html')
 
-@app.route('/welcome')
-def welcome():
-    return render_template('welcome.html')  # render a template
+# Earlier development phase included welcome. Not used any longer
 
+# @app.route('/welcome')
+# def welcome():
+#     return render_template('welcome.html')  # render a template
+
+
+#Defining the login
 @app.route("/login", methods=['GET','POST'])
 def login():
   error=None
@@ -128,6 +144,7 @@ def login():
 
   return render_template('login.html', error=error)
 
+#Defining the login
 @app.route('/logout')
 @login_required
 def logout():
@@ -151,27 +168,30 @@ def start_tour():
     return  render_template('StartTour.html')
 
 # Way to go and way back route selection 
-ctrl = 0 
-@app.route('/Input Route to go')
-@login_required
-def Input_Route():
-    global ctrl
-    ctrl = 1
-    return 'true'
+# Frome earlier deleopment phase
+# ctrl = 0 
+# @app.route('/Input Route to go')
+# @login_required
+# def Input_Route():
+#     global ctrl
+#     ctrl = 1
+#     return 'true'
 
-@app.route('/Input return Route')
-@login_required
-def Return_Route():
-    ctrl = 2
-    return 'true'
+# @app.route('/Input return Route')
+# @login_required
+# def Return_Route():
+#     ctrl = 2
+#     return 'true'
 
 # Two lists are created where to store the route to go and come back 
-
+# From earlier devlopment phase
 global go_route 
 global back_route 
 
 
 #######################################################################################################################################################################
+# Setting up the desired stops on the route
+
 @app.route('/setroute' , methods=['POST'])
 @login_required
 def setroute():
@@ -207,18 +227,21 @@ def setroute():
             currentroute.append(x)
             print (i)
             i+=1
-        print (currentroute)
+        print ('Selected route is ',currentroute)
 
 
     print ('source')
     lines=currentroute
+    flash('Selected route: ')
+    flash(lines)
 #    hat (lines)
          
    ################################################################################    Added 
-    if ctrl == 1:  # in this way it would be possible to store the two routes 
-         go_route = go_route.append("Kokkola")
-    elif ctrl == 2: 
-         back_route = back_route.append("Kokkola")
+   # From earlier devlopment phase
+    # if ctrl == 1:  # in this way it would be possible to store the two routes 
+    #      go_route = go_route.append("Kokkola")
+    # elif ctrl == 2: 
+    #      back_route = back_route.append("Kokkola")
     ##############################################################################  
          
     return redirect(url_for('start_tour'))
@@ -228,6 +251,7 @@ def setroute():
 ############################################################################################################################################################################
 """ Timer function when stopping at the port. Asks the user to input the port at which they are stopping and then
 stores the name of the port and time into two lists, also a countdown timer of 2h (stoppage time at the port) is started and should be printed to the LED matrix """
+# Bug3 Timer not working correctly
 
 port_stops_time = []
 stop_port = []
@@ -236,7 +260,8 @@ stop_port = []
 def Port_stop(): 
     global port_stops_time
     global stop_port 
-    
+
+
     if request.method == 'POST':
         port = request.form.get('port')
         stoptime = request.form.get('stoptime')  
@@ -262,6 +287,7 @@ def Port_stop():
 #            hat (lines)
             time.sleep(1) 
             t -= 1
+
     return render_template('StartTour.html')
 
 
@@ -269,6 +295,7 @@ def Port_stop():
 
 
 """ Uploading the data to the database """
+# Bug4 database functionalities not insterted
 @app.route('/End tour ~ Upload the data')
 @login_required
 def end_tour():
@@ -280,6 +307,10 @@ def end_tour():
    return  render_template('test.html')
 
 ##############################################################################################################################################################################
+
+# Actual running the program
 if __name__ == "__main__":
  print ("Start")
+ #app.run(host='0.0.0.0',port=5010)
+ # With debug mode
  app.run(host='0.0.0.0',port=5010, debug=True)
