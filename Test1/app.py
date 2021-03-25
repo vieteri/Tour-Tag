@@ -5,15 +5,18 @@ import colorsys
 import time
 from sys import exit
 from functools import wraps
-#try:
-#     from PIL import Image, ImageDraw, ImageFont
-# except ImportError:
-#     exit('This script requires the pillow module\nInstall with: sudo pip install pillow')
+from datetime import datetime
 
-#import unicornhathd
+try:
+    from PIL import Image, ImageDraw, ImageFont
+except ImportError:
+    exit('This script requires the pillow module\nInstall with: sudo pip install pillow')
+
+import unicornhathd
 
 FONT = ('/usr/share/fonts/truetype/freefont/FreeSansBold.ttf', 12)
-
+global currentroute
+currentroute=[]
 lines = ["aloitus",
          "5",
          "4",
@@ -24,12 +27,6 @@ lines = ["aloitus",
 # basic Flask functions from https://circuitdigest.com/microcontroller-projects/web-controlled-raspberry-pi-surveillance-robot
 # login functions from https://github.com/realpython/discover-flask
     
-
-
-
-
-
-
 
 
 app = Flask(__name__)
@@ -48,60 +45,65 @@ def login_required(f):
             return redirect(url_for('login'))
     return wrap
 
+############################################################################
+def hat(lines):
+    colours = [tuple([int(n * 255) for n in colorsys.hsv_to_rgb(x / float(len(lines)), 1.0, 1.0)]) for x in range(len(lines))]
+    unicornhathd.rotation(270)
+    unicornhathd.brightness(0.6)
 
-#def hat(lines):
-#    colours = [tuple([int(n * 255) for n in colorsys.hsv_to_rgb(x / float(len(lines)), 1.0, 1.0)]) for x in range(len(lines))]
-#    unicornhathd.rotation(270)
-#    unicornhathd.brightness(0.6)
+    width, height = unicornhathd.get_shape()
 
-#    width, height = unicornhathd.get_shape()
+    text_x = width
+    text_y = 2
 
-#    text_x = width
-#    text_y = 2
+    font_file, font_size = FONT
 
-#    font_file, font_size = FONT
+    font = ImageFont.truetype(font_file, font_size)
 
-#    font = ImageFont.truetype(font_file, font_size)
-
-#    text_width, text_height = width, 0
-#    try:
+    text_width, text_height = width, 0
+    try:
         
-#        for line in lines:
-#            w, h = font.getsize(line)
-#            text_width += w + width
-#            text_height = max(text_height, h)
+        for line in lines:
+            w, h = font.getsize(line)
+            text_width += w + width
+            text_height = max(text_height, h)
 
-#        text_width += width + text_x + 1
+        text_width += width + text_x + 1
 
-#        image = Image.new('RGB', (text_width, max(16, text_height)), (0, 0, 0))
-#        draw = ImageDraw.Draw(image)
+        image = Image.new('RGB', (text_width, max(16, text_height)), (0, 0, 0))
+        draw = ImageDraw.Draw(image)
 
-#        offset_left = 0
+        offset_left = 0
 
-#        for index, line in enumerate(lines):
-#            draw.text((text_x + offset_left, text_y), line, colours[index], font=font)
+        for index, line in enumerate(lines):
+            draw.text((text_x + offset_left, text_y), line, colours[index], font=font)
 
-#            offset_left += font.getsize(line)[0] + width
+            offset_left += font.getsize(line)[0] + width
 
-#        for scroll in range(text_width - width):
-#            for x in range(width):
-#                for y in range(height):
-#                    pixel = image.getpixel((x + scroll, y))
-#                    r, g, b = [int(n) for n in pixel]
-#                    unicornhathd.set_pixel(width - 1 - x, y, r, g, b)
+        for scroll in range(text_width - width):
+            for x in range(width):
+                for y in range(height):
+                    pixel = image.getpixel((x + scroll, y))
+                    r, g, b = [int(n) for n in pixel]
+                    unicornhathd.set_pixel(width - 1 - x, y, r, g, b)
 
-#            unicornhathd.show()
-#            time.sleep(0.01)
+            unicornhathd.show()
+            time.sleep(0.01)
 
-#    except : #KeyboardInterrupt
-#        unicornhathd.off()
+    except : #KeyboardInterrupt
+        unicornhathd.off()
 
-#    finally:
-#        unicornhathd.off()
-#        return 'true'
+    finally:
+        unicornhathd.off()
+        return 'true'
     
-#aloitus=hat(lines)
+aloitus=hat(lines)
+##########################################################################
 print ("DOne")
+#list of ports for setting the route
+stopssouth=['oulu','kokkola','vaasa','pori','turku','helsinki','hamina']
+
+
 
 a=1
 @app.route("/")
@@ -139,13 +141,14 @@ def logout():
 # Start of the tour function and storing of the time 
 
 starting_times = []
-@app.route('/Start tour')
+@app.route('/StartTour')
 @login_required
 def start_tour():
     global  starting_times
     now = datetime.now()
+    print ('Tour start time is ',now)
     starting_times =  starting_times.append(now)   
-    return  'true'
+    return  render_template('StartTour.html')
 
 # Way to go and way back route selection 
 ctrl = 0 
@@ -155,8 +158,7 @@ def Input_Route():
     global ctrl
     ctrl = 1
     return 'true'
-go_route = []
-back_route =[]
+
 @app.route('/Input return Route')
 @login_required
 def Return_Route():
@@ -168,14 +170,48 @@ def Return_Route():
 global go_route 
 global back_route 
 
-#######################################################################################################################################################################
 
-@app.route('/kokkola')
+#######################################################################################################################################################################
+@app.route('/setroute' , methods=['POST'])
 @login_required
-def left_side():
-    data1="LEFT"
-    print (data1)
-    lines=["Kokkola"]
+def setroute():
+    
+    print ('setroute')
+    if request.method == 'POST':
+        source = request.form.get('source')
+        destination = request.form.get('destination')
+        sourceindex=stopssouth.index(source)
+        print ('source index ',sourceindex)
+        destinationidex=stopssouth.index(destination)
+        print ('destination index ',destinationidex)
+        currentroute=[]
+        i=1
+        direction=[]
+        if sourceindex > destinationidex:
+          direction.append('north')
+
+          i=sourceindex
+          while i != destinationidex-1:
+            x=stopssouth[i]
+            currentroute.append(x)
+            print (i)
+            i-=1
+
+        else:
+          direction.append('south')
+
+          i=sourceindex
+          while i != destinationidex+1:
+            x=stopssouth[i]
+            print (x)
+            currentroute.append(x)
+            print (i)
+            i+=1
+        print (currentroute)
+
+
+    print ('source')
+    lines=currentroute
     hat (lines)
          
    ################################################################################    Added 
@@ -185,38 +221,9 @@ def left_side():
          back_route = back_route.append("Kokkola")
     ##############################################################################  
          
-    return 'true'
+    return redirect(url_for('start_tour'))
 
-@app.route('/pori')
-@login_required
-def right_side():
-   data1="RIGHT"
-   lines=["Pori"]
-   #hat (lines)
-   return 'true'
 
-@app.route('/vaasa')
-@login_required
-def up_side():
-   data1="FORWARD"
-   lines=["Vaasa"]
-   #hat (lines)
-   return 'true'
-
-@app.route('/oulu')
-@login_required
-def down_side():
-   data1="BACK"
-   lines=["Oulu"]
-   #hat (lines)
-   return 'true'
-
-@app.route('/stop')
-@login_required
-def stop():
-   data1="STOP"
-
-   return  'true'
 
 ############################################################################################################################################################################
 """ Timer function when stopping at the port. Asks the user to input the port at which they are stopping and then
@@ -229,22 +236,36 @@ stop_port = []
 def Port_stop(): 
     global port_stops_time
     global stop_port 
-         
-    now = datetime.now()
-    port_stops_time =  port_stops_time.append(now)   
-    port = request.form['port']
-    stop_port = stop_port.append(port)
-    t =  7200
-    t = int(t)
-    while t: 
-        mins, secs = divmod(t, 60) 
-        timer = '{:02d}:{:02d}:{:02d}'.format(hours, mins, secs)
-        data1="FORWARD"
-        lines =[timer] # this should print the timer to the LEDs 
-        #hat (lines)
-        time.sleep(1) 
-        t -= 1
-    return 'true'
+    
+    if request.method == 'POST':
+        port = request.form.get('port')
+        stoptime = request.form.get('stoptime')  
+        stoptime=int (stoptime)   
+        now = datetime.now()
+        port_stops_time =  port_stops_time.append(now)   
+        
+        stop_port = stop_port.append(port)
+        t =  7200
+        if stoptime > t:
+          t = stoptime
+        else:
+          t = 10 # 7200 is correct value for 2 hours stop at port
+        t = int(t)
+        while t:
+            hours=0 
+            mins=0 
+            secs=0 
+            mins, secs = divmod(t, 60) 
+            timer = '{:02d}:{:02d}:{:02d}'.format(hours, mins, secs)
+            lines =[timer] # this should print the timer to the LEDs 
+            print (lines)
+            hat (lines)
+            time.sleep(1) 
+            t -= 1
+    return render_template('StartTour.html')
+
+
+
 
 
 """ Uploading the data to the database """
@@ -256,7 +277,7 @@ def end_tour():
          # stop_port  
          # go_route
          # back_route 
-   return  'true'
+   return  render_template('test.html')
 
 ##############################################################################################################################################################################
 if __name__ == "__main__":
