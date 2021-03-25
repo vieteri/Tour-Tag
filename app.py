@@ -56,7 +56,7 @@ def login_required(f):
 
 def hat(lines):
     colours = [tuple([int(n * 255) for n in colorsys.hsv_to_rgb(x / float(len(lines)), 1.0, 1.0)]) for x in range(len(lines))]
-    unicornhathd.rotation(270)
+    unicornhathd.rotation(90)
     unicornhathd.brightness(0.6)
 
     width, height = unicornhathd.get_shape()
