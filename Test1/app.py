@@ -6,14 +6,14 @@ import time
 from sys import exit
 from functools import wraps
 from datetime import datetime
+######################################
+# try:
+#     from PIL import Image, ImageDraw, ImageFont
+# except ImportError:
+#     exit('This script requires the pillow module\nInstall with: sudo pip install pillow')
 
-try:
-    from PIL import Image, ImageDraw, ImageFont
-except ImportError:
-    exit('This script requires the pillow module\nInstall with: sudo pip install pillow')
-
-import unicornhathd
-
+# import unicornhathd
+######################################
 FONT = ('/usr/share/fonts/truetype/freefont/FreeSansBold.ttf', 12)
 global currentroute
 currentroute=[]
@@ -46,58 +46,58 @@ def login_required(f):
     return wrap
 
 ############################################################################
-def hat(lines):
-    colours = [tuple([int(n * 255) for n in colorsys.hsv_to_rgb(x / float(len(lines)), 1.0, 1.0)]) for x in range(len(lines))]
-    unicornhathd.rotation(270)
-    unicornhathd.brightness(0.6)
+# def hat(lines):
+#     colours = [tuple([int(n * 255) for n in colorsys.hsv_to_rgb(x / float(len(lines)), 1.0, 1.0)]) for x in range(len(lines))]
+#     unicornhathd.rotation(270)
+#     unicornhathd.brightness(0.6)
 
-    width, height = unicornhathd.get_shape()
+#     width, height = unicornhathd.get_shape()
 
-    text_x = width
-    text_y = 2
+#     text_x = width
+#     text_y = 2
 
-    font_file, font_size = FONT
+#     font_file, font_size = FONT
 
-    font = ImageFont.truetype(font_file, font_size)
+#     font = ImageFont.truetype(font_file, font_size)
 
-    text_width, text_height = width, 0
-    try:
+#     text_width, text_height = width, 0
+#     try:
         
-        for line in lines:
-            w, h = font.getsize(line)
-            text_width += w + width
-            text_height = max(text_height, h)
+#         for line in lines:
+#             w, h = font.getsize(line)
+#             text_width += w + width
+#             text_height = max(text_height, h)
 
-        text_width += width + text_x + 1
+#         text_width += width + text_x + 1
 
-        image = Image.new('RGB', (text_width, max(16, text_height)), (0, 0, 0))
-        draw = ImageDraw.Draw(image)
+#         image = Image.new('RGB', (text_width, max(16, text_height)), (0, 0, 0))
+#         draw = ImageDraw.Draw(image)
 
-        offset_left = 0
+#         offset_left = 0
 
-        for index, line in enumerate(lines):
-            draw.text((text_x + offset_left, text_y), line, colours[index], font=font)
+#         for index, line in enumerate(lines):
+#             draw.text((text_x + offset_left, text_y), line, colours[index], font=font)
 
-            offset_left += font.getsize(line)[0] + width
+#             offset_left += font.getsize(line)[0] + width
 
-        for scroll in range(text_width - width):
-            for x in range(width):
-                for y in range(height):
-                    pixel = image.getpixel((x + scroll, y))
-                    r, g, b = [int(n) for n in pixel]
-                    unicornhathd.set_pixel(width - 1 - x, y, r, g, b)
+#         for scroll in range(text_width - width):
+#             for x in range(width):
+#                 for y in range(height):
+#                     pixel = image.getpixel((x + scroll, y))
+#                     r, g, b = [int(n) for n in pixel]
+#                     unicornhathd.set_pixel(width - 1 - x, y, r, g, b)
 
-            unicornhathd.show()
-            time.sleep(0.01)
+#             unicornhathd.show()
+#             time.sleep(0.01)
 
-    except : #KeyboardInterrupt
-        unicornhathd.off()
+#     except : #KeyboardInterrupt
+#         unicornhathd.off()
 
-    finally:
-        unicornhathd.off()
-        return 'true'
+#     finally:
+#         unicornhathd.off()
+#         return 'true'
     
-aloitus=hat(lines)
+# aloitus=hat(lines)
 ##########################################################################
 print ("DOne")
 #list of ports for setting the route
@@ -212,7 +212,7 @@ def setroute():
 
     print ('source')
     lines=currentroute
-    hat (lines)
+#    hat (lines)
          
    ################################################################################    Added 
     if ctrl == 1:  # in this way it would be possible to store the two routes 
@@ -259,7 +259,7 @@ def Port_stop():
             timer = '{:02d}:{:02d}:{:02d}'.format(hours, mins, secs)
             lines =[timer] # this should print the timer to the LEDs 
             print (lines)
-            hat (lines)
+#            hat (lines)
             time.sleep(1) 
             t -= 1
     return render_template('StartTour.html')
