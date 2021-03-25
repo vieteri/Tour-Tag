@@ -133,7 +133,7 @@ def login():
 def logout():
   session.pop('logged_in', None)
   flash('You were just logged out')
-  return redirect(url_for('welcome'))
+  return redirect(url_for('login'))
 
 #############################################################################################################################################################
 """ Functions for starting the tour and selecting the to go and come back route """
