@@ -285,7 +285,7 @@ def Port_stop():
             lines =[timer] # this should print the timer to the LEDs 
             print (lines)
             hat (lines)
-            time.sleep(1) 
+            time.sleep(0.1) 
             t -= 1
 
     return render_template('StartTour.html')
@@ -311,6 +311,6 @@ def end_tour():
 # Actual running the program
 if __name__ == "__main__":
  print ("Start")
- #app.run(host='0.0.0.0',port=5010)
+ app.run(host='0.0.0.0',port=5010)
  # With debug mode
- app.run(host='0.0.0.0',port=5010, debug=True)
+ #app.run(host='0.0.0.0',port=5010, debug=True)
